@@ -1,0 +1,29 @@
+# Virtual Environment
+insurance_project_env/
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+
+# IDE
+.vscode/
+.idea/
+
+# Environment
+.env
+
+# Logs
+*.log
+
+# Output
+output/
+
+# Python build
+build/
+dist/
+*.egg-info/
+
+# OS
+.DS_Store
+Thumbs.db
