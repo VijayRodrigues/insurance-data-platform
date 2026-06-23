@@ -30,7 +30,7 @@ RANDOM_SEED = 42
 
 DB_HOST = "localhost"
 
-DB_PORT = 5432
+DB_PORT = 5433
 
 DB_NAME = "insurance_platform"
 

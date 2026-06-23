@@ -241,3 +241,47 @@ print(f"Claim Notes          : {len(claim_notes)}")
 print(f"Claim Reserves       : {len(claim_reserves)}")
 print(f"Reserve Transactions : {len(claim_reserve_transactions)}")
 print(f"Claim Payments       : {len(claim_payments)}")
+
+
+
+from loaders.loader_manager import LoaderManager
+
+loader = LoaderManager()
+
+datasets = [
+
+    ("master", "branch", branches),
+    ("master", "agent", agents),
+    ("master", "broker", brokers),
+    ("master", "underwriter", underwriters),
+    ("master", "insurance_product", products),
+    ("master", "coverage_type", coverages),
+    ("master", "customer", customers),
+    ("master", "customer_address", addresses),
+    ("master", "business_customer", business_customers),
+
+    ("sales", "quote", quotes),
+    ("sales", "quote_version", quote_versions),
+
+    ("policy", "policy", policies),
+    ("policy", "policy_version", policy_versions),
+    ("policy", "policy_transaction", policy_transactions),
+    ("policy", "policy_coverage", policy_coverages),
+    ("policy", "vehicle", vehicles),
+    ("policy", "property", properties),
+
+    ("finance", "premium", premiums),
+    ("finance", "premium_payment", premium_payments),
+
+    ("claims", "fnol", fnols),
+    ("claims", "claim", claims),
+    ("claims", "claim_note", claim_notes),
+    ("claims", "claim_reserve", claim_reserves),
+    ("claims", "claim_reserve_transaction", claim_reserve_transactions),
+    ("claims", "claim_payment", claim_payments)
+
+]
+
+print(products.dtypes)
+print(products)
+loader.load_all(datasets)

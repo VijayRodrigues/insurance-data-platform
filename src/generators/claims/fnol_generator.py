@@ -21,6 +21,12 @@ class FNOLGenerator(BaseGenerator):
         "BROKER"
     ]
 
+    FNOL_STATUS = [
+        "OPEN",
+        "UNDER_REVIEW",
+        "CLOSED"
+    ]
+
     def generate(self, policy_df):
 
         fnols = []
@@ -34,8 +40,13 @@ class FNOLGenerator(BaseGenerator):
 
         for _, policy in sample_policies.iterrows():
 
-            loss_date = self.fake.date_between(
+            incident_date = self.fake.date_between(
                 start_date=policy["policy_effective_date"],
+                end_date=policy["policy_expiry_date"]
+            )
+
+            reported_date = self.fake.date_between(
+                start_date=incident_date,
                 end_date=policy["policy_expiry_date"]
             )
 
@@ -43,23 +54,32 @@ class FNOLGenerator(BaseGenerator):
 
                 "fnol_id": fnol_id,
 
-                "fnol_number": f"FNOL-{fnol_id:08d}",
+                "fnol_reference":
+                    f"FNOL-{fnol_id:08d}",
 
-                "policy_id": policy["policy_id"],
+                "policy_id":
+                    policy["policy_id"],
 
-                "reported_date": loss_date,
+                "reported_by":
+                    random.choice(self.REPORT_CHANNELS),
 
-                "loss_date": loss_date,
+                "reported_date":
+                    reported_date,
 
-                "loss_type": random.choice(
-                    self.LOSS_TYPES
-                ),
+                "incident_date":
+                    incident_date,
 
-                "report_channel": random.choice(
-                    self.REPORT_CHANNELS
-                ),
+                "incident_location":
+                    self.fake.address(),
 
-                "loss_description": self.fake.sentence(),
+                "incident_description":
+                    self.fake.paragraph(),
+
+                "loss_type":
+                    random.choice(self.LOSS_TYPES),
+
+                "fnol_status":
+                    random.choice(self.FNOL_STATUS),
 
                 **self.audit_columns()
 

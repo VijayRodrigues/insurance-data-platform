@@ -5,10 +5,12 @@ from generators.base_generator import BaseGenerator
 
 class ClaimReserveTransactionGenerator(BaseGenerator):
 
-    TRANSACTION_TYPES = [
-        "INITIAL",
-        "INCREASE",
-        "DECREASE"
+    ADJUSTMENT_REASONS = [
+        "INITIAL_RESERVE",
+        "SURVEYOR_UPDATE",
+        "CLAIM_REASSESSMENT",
+        "LEGAL_REVIEW",
+        "FINAL_SETTLEMENT"
     ]
 
     def generate(self, reserve_df):
@@ -19,45 +21,45 @@ class ClaimReserveTransactionGenerator(BaseGenerator):
 
         for _, reserve in reserve_df.iterrows():
 
-            transaction_count = random.randint(
-                1,
-                3
+            previous_amount = round(
+                reserve["reserve_amount"] *
+                random.uniform(0.70, 0.95),
+                2
             )
 
-            balance = reserve["reserve_amount"]
+            new_amount = reserve["reserve_amount"]
 
-            for _ in range(transaction_count):
+            record = {
 
-                amount = round(
-                    random.uniform(
-                        1000,
-                        balance * 0.30
+                "claim_reserve_transaction_id":
+                    claim_reserve_transaction_id,
+
+                "claim_reserve_id":
+                    reserve["claim_reserve_id"],
+
+                "transaction_date":
+                    self.fake.date_time_between(
+                        start_date="-180d",
+                        end_date="now"
                     ),
-                    2
-                )
 
-                transactions.append({
+                "previous_amount":
+                    previous_amount,
 
-                    "claim_reserve_transaction_id":
-                        claim_reserve_transaction_id,
+                "new_amount":
+                    new_amount,
 
-                    "claim_reserve_id":
-                        reserve["claim_reserve_id"],
+                "adjustment_reason":
+                    random.choice(
+                        self.ADJUSTMENT_REASONS
+                    ),
 
-                    "transaction_type":
-                        random.choice(
-                            self.TRANSACTION_TYPES
-                        ),
+                **self.audit_columns()
 
-                    "transaction_amount":
-                        amount,
+            }
 
-                    **self.audit_columns()
+            transactions.append(record)
 
-                })
+            claim_reserve_transaction_id += 1
 
-                claim_reserve_transaction_id += 1
-
-        return self.dataframe(
-            transactions
-        )
+        return self.dataframe(transactions)

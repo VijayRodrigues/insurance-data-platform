@@ -1,9 +1,18 @@
 import random
-
+from datetime import date
 from generators.base_generator import BaseGenerator
 
 
 class ClaimGenerator(BaseGenerator):
+
+    CLAIM_TYPES = [
+        "OWN_DAMAGE",
+        "THIRD_PARTY",
+        "FIRE",
+        "THEFT",
+        "FLOOD",
+        "LIABILITY"
+    ]
 
     CLAIM_STATUS = [
         "OPEN",
@@ -20,43 +29,69 @@ class ClaimGenerator(BaseGenerator):
 
         for _, fnol in fnol_df.iterrows():
 
-            estimated_loss = random.randint(
+            claim_amount = random.randint(
                 10000,
                 1500000
             )
 
-            approved = round(
-                estimated_loss *
+            approved_amount = round(
+                claim_amount *
                 random.uniform(0.60, 1.00),
                 2
             )
+
+            
+
+            settlement_date = None
+
+            if random.random() < 0.40:
+
+                reported_date = fnol["reported_date"]
+
+                if reported_date <= date.today():
+
+                    settlement_date = self.fake.date_between(
+                        start_date=reported_date,
+                        end_date="today"
+                    )
 
             record = {
 
                 "claim_id": claim_id,
 
-                "claim_number":
+                "claim_reference":
                     f"CLM-{claim_id:08d}",
 
                 "fnol_id":
                     fnol["fnol_id"],
+
+                "policy_id":
+                    fnol["policy_id"],
+
+                "claim_type":
+                    random.choice(
+                        self.CLAIM_TYPES
+                    ),
 
                 "claim_status":
                     random.choice(
                         self.CLAIM_STATUS
                     ),
 
-                "estimated_loss_amount":
-                    estimated_loss,
+                "loss_date":
+                    fnol["incident_date"],
+
+                "reported_date":
+                    fnol["reported_date"],
+
+                "claim_amount":
+                    claim_amount,
 
                 "approved_amount":
-                    approved,
+                    approved_amount,
 
-                "closed_date":
-                    None,
-
-                "remarks":
-                    None,
+                "settlement_date":
+                    settlement_date,
 
                 **self.audit_columns()
 
