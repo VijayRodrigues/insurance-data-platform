@@ -7,6 +7,23 @@ from generators.master.broker_generator import BrokerGenerator
 from generators.master.underwriter_generator import UnderwriterGenerator
 from generators.master.insurance_product_generator import InsuranceProductGenerator
 from generators.master.coverage_type_generator import CoverageTypeGenerator
+from generators.sales.quote_generator import QuoteGenerator
+from generators.sales.quote_version_generator import QuoteVersionGenerator
+from generators.policy.policy_generator import PolicyGenerator
+from generators.policy.policy_version_generator import PolicyVersionGenerator
+from generators.policy.policy_transaction_generator import PolicyTransactionGenerator
+from generators.policy.policy_coverage_generator import PolicyCoverageGenerator
+from generators.policy.vehicle_generator import VehicleGenerator
+from generators.policy.property_generator import PropertyGenerator
+from generators.finance.premium_generator import PremiumGenerator
+from generators.finance.premium_payment_generator import PremiumPaymentGenerator
+from generators.claims.fnol_generator import FNOLGenerator
+from generators.claims.claim_generator import ClaimGenerator
+from generators.claims.claim_note_generator import ClaimNoteGenerator
+from generators.claims.claim_reserve_generator import ClaimReserveGenerator
+from generators.claims.claim_reserve_transaction_generator import ClaimReserveTransactionGenerator
+from generators.claims.claim_payment_generator import ClaimPaymentGenerator
+
 
 customer_generator = CustomerGenerator()
 customers = customer_generator.generate(20)
@@ -43,43 +60,160 @@ products = product_generator.generate()
 coverage_generator = CoverageTypeGenerator()
 coverages = coverage_generator.generate()
 
+quote_generator = QuoteGenerator()
+quotes = quote_generator.generate(
+    customer_df=customers,
+    product_df=products,
+    agent_df=agents,
+    broker_df=brokers,
+    branch_df=branches
+)
+
+quote_version_generator = QuoteVersionGenerator()
+quote_versions = quote_version_generator.generate(quotes)
+
+policy_generator = PolicyGenerator()
+policies = policy_generator.generate(
+    quote_df=quotes,
+    quote_version_df=quote_versions,
+    underwriter_df=underwriters
+)
+
+policy_version_generator = PolicyVersionGenerator()
+policy_versions = policy_version_generator.generate(
+    policies
+)
+
+policy_transaction_generator = PolicyTransactionGenerator()
+policy_transactions = policy_transaction_generator.generate(
+    policy_df=policies,
+    policy_version_df=policy_versions
+)
+
+policy_coverage_generator = PolicyCoverageGenerator()
+policy_coverages = policy_coverage_generator.generate(
+    policy_version_df=policy_versions,
+    coverage_type_df=coverages
+)
+
+vehicle_generator = VehicleGenerator()
+vehicles = vehicle_generator.generate(
+    policies
+)
+
+property_generator = PropertyGenerator()
+properties = property_generator.generate(
+    policies
+)
+
+premium_generator = PremiumGenerator()
+premiums = premium_generator.generate(
+    policy_df=policies,
+    policy_version_df=policy_versions
+)
+
+premium_payment_generator = PremiumPaymentGenerator()
+premium_payments = premium_payment_generator.generate(
+    premiums
+)
+
+fnol_generator = FNOLGenerator()
+fnols = fnol_generator.generate(
+    policies
+)
+
+claim_generator = ClaimGenerator()
+claims = claim_generator.generate(
+    fnols
+)
+
+claim_note_generator = ClaimNoteGenerator()
+claim_notes = claim_note_generator.generate(claims)
+
+claim_reserve_generator = ClaimReserveGenerator()
+claim_reserves = claim_reserve_generator.generate(claims)
+
+claim_reserve_transaction_generator = ClaimReserveTransactionGenerator()
+claim_reserve_transactions = claim_reserve_transaction_generator.generate(claim_reserves)
+
+claim_payment_generator = ClaimPaymentGenerator()
+claim_payments = claim_payment_generator.generate(claims)
+
 
 print(customers.head())
-
 print()
 
 print(addresses.head())
-
 print()
 
 print(business_customers.head())
-
 print()
 
 print(branches.head())
-
 print()
 
 print(agents.head())
-
 print()
 
 print(brokers.head())
-
 print()
 
 print(underwriters.head())
-
 print()
 
 print(products.head())
-
 print()
 
 print(coverages.head())
-
 print()
 
+print(quotes.head())
+print()
+
+print(quote_versions.head())
+print()
+
+print(policies.head())
+print()
+
+print(policy_versions.head())
+print()
+
+print(policy_transactions.head())
+print()
+
+print(policy_coverages.head())
+print()
+
+print(vehicles.head())
+print()
+
+print(properties.head())
+print()
+
+print(premiums.head())
+print()
+
+print(premium_payments.head())
+print()
+
+print(fnols.head())
+print()
+
+print(claims.head())
+print()
+
+print(claim_notes.head())
+print()
+
+print(claim_reserves.head())
+print()
+
+print(claim_reserve_transactions.head())
+print()
+
+print(claim_payments.head())
+print()
 
 
 print(f"Customers           : {len(customers)}")
@@ -91,3 +225,19 @@ print(f"Brokers             : {len(brokers)}")
 print(f"Underwriters        : {len(underwriters)}")
 print(f"Insurance Products  : {len(products)}")
 print(f"Coverage Types      : {len(coverages)}")
+print(f"Quotes              : {len(quotes)}")
+print(f"Quote Versions      : {len(quote_versions)}")
+print(f"Policies            : {len(policies)}")
+print(f"Policy Versions     : {len(policy_versions)}")
+print(f"Policy Transactions : {len(policy_transactions)}")
+print(f"Policy Coverages    : {len(policy_coverages)}")
+print(f"Vehicles            : {len(vehicles)}")
+print(f"Properties          : {len(properties)}")
+print(f"Premiums            : {len(premiums)}")
+print(f"Premium Payments    : {len(premium_payments)}")
+print(f"FNOLs               : {len(fnols)}")
+print(f"Claims              : {len(claims)}")
+print(f"Claim Notes          : {len(claim_notes)}")
+print(f"Claim Reserves       : {len(claim_reserves)}")
+print(f"Reserve Transactions : {len(claim_reserve_transactions)}")
+print(f"Claim Payments       : {len(claim_payments)}")
