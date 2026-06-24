@@ -1,3 +1,7 @@
+import os
+
+from dotenv import load_dotenv
+
 from pathlib import Path
 
 # =============================================================================
@@ -7,6 +11,7 @@ from pathlib import Path
 PROJECT_NAME = "Insurance Data Platform"
 
 BASE_DIR = Path(__file__).resolve().parents[2]
+load_dotenv(BASE_DIR / ".env")
 
 # =============================================================================
 # DATASET SIZE
@@ -28,15 +33,32 @@ RANDOM_SEED = 42
 # DATABASE
 # =============================================================================
 
-DB_HOST = "localhost"
+DB_HOST = os.getenv(
+    "DB_HOST",
+    "localhost"
+)
 
-DB_PORT = 5433
+DB_PORT = int(
+    os.getenv(
+        "DB_PORT",
+        "5432"
+    )
+)
 
-DB_NAME = "insurance_platform"
+DB_NAME = os.getenv(
+    "DB_NAME",
+    "insurance_platform"
+)
 
-DB_USER = "postgres_docker_user"
+DB_USER = os.getenv(
+    "DB_USER",
+    "postgres"
+)
 
-DB_PASSWORD = "postgres_docker_password"
+DB_PASSWORD = os.getenv(
+    "DB_PASSWORD",
+    "postgres"
+)
 
 # =============================================================================
 # OUTPUT
